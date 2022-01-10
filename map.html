@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>FindYourHiroshima_MAP</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/map.style.css">
+    
+    <style>html,
+    body{
+        height:600px;
+        width: 1200px;
+        position: relative; /* 今の位置を基準 */
+        left: 150px;
+        }</style>
+</head>
+<body>
+    <header id="header">
+        <div class="container">
+          <div id="title">Find Your Hiroshima</div> 
+          <div class="item2">DISCOVERY MAP</div> 
+        </div>
+    </header>
+
+
+
+
+<div id="myMap" lang="en" style='width:75%;height:98%;'></div>
+
+
+
+
+
+<!-- jQuery&GoogleMapsAPI -->
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<!-- /jQuery&GoogleMapsAPI -->
+
+<!-- [ infobox Object ] https://msdn.microsoft.com/en-us/library/mt712658.aspx -->
+<script src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=AsSm3m3zEwW8LmqJ9IWUvZMPI8ZFbOCvlpxP-muT0LbrSpgBj4cWeqp-0KNubx-6' async defer></script>
+<script>
+    //Maps Init
+    function GetMap() {
+        let map = new Microsoft.Maps.Map('#myMap', {
+            center: new Microsoft.Maps.Location(34.56662576750408, 132.78084040288618),
+            zoom: 10
+        });
+    //Set:Infobox
+        let infoboxTemplate = '<div class="customInfobox"><div class="title">{title}</div>{description}</div>';
+    //Set:Infobox
+        let location1 = new Microsoft.Maps.Location(34.690475659327866, 132.6957722623096);
+        let discription1='<img src="https://www.bingmapsportal.com/Content/images/poi_custom.png" align="left" style="margin-right:5px;"/><div><img src="./img/zazen.png" width=60px></div><a href="./zazen.talk.html" target="_blank"><button>CHAT!</button></a>';
+        let infobox1 = new Microsoft.Maps.Infobox(location1, {
+            htmlContent: infoboxTemplate.replace('{title}', '1. Japanese Zazen').replace('{description}',discription1)
+        });
+    //Set:Infobox
+        let location2 = new Microsoft.Maps.Location(34.60000, 133.1000);
+        let discription2='<img src="https://www.bingmapsportal.com/Content/images/poi_custom.png" align="left" style="margin-right:5px;"/><div><img src="./img/okonomi.jpg" width=120px></div><a href="./okonomiyaki.talk.html" target="_blank"><button>CHAT!</button></a>';
+        let infobox2 = new Microsoft.Maps.Infobox(location2, {
+            htmlContent: infoboxTemplate.replace('{title}', '2. Okonomiyaki Cooking').replace('{description}',discription2)
+        });
+    //Set:Infobox
+        let location3 = new Microsoft.Maps.Location(34.7000,132.4000);
+        let discription3='<img src="https://www.bingmapsportal.com/Content/images/poi_custom.png" align="left" style="margin-right:5px;"/><div><img src="./img/ryokan.png" width=90px></div><a href="./ryokan.talk.html" target="_blank"><button>CHAT!</button></a>';
+        let infobox3 = new Microsoft.Maps.Infobox(location3, {
+            htmlContent: infoboxTemplate.replace('{title}', '3. Onsen Ryokan').replace('{description}',discription3)
+        });
+    //Set:Infobox
+        let location4 = new Microsoft.Maps.Location(34.3000,132.6030);
+        let discription4='<img src="https://www.bingmapsportal.com/Content/images/poi_custom.png" align="left" style="margin-right:5px;"/><div><img src="./img/history.png" width=90px></div><a href="./history.talk.html" target="_blank"><button>CHAT!</button></a>';
+        let infobox4 = new Microsoft.Maps.Infobox(location4, {
+            htmlContent: infoboxTemplate.replace('{title}', '4. Study Hiroshima history').replace('{description}',discription4)
+        });
+    //Set:Infobox
+        let location5 = new Microsoft.Maps.Location(34.3000, 133.0000);
+        let discription5='<img src="https://www.bingmapsportal.com/Content/images/poi_custom.png" align="left" style="margin-right:5px;"/><div><img src="./img/strawberry.jpg" width=120px></div><a href="./strawberry.talk.html" target="_blank"><button>CHAT!</button></a>'
+        let infobox5 = new Microsoft.Maps.Infobox(location5, {
+            htmlContent: infoboxTemplate.replace('{title}', '5. Strawberry picking').replace('{description}', discription5)
+        });
+    //Add:Infobox
+        infobox1.setMap(map); //Add infobox to Map
+        infobox2.setMap(map); //Add infobox to Map
+        infobox3.setMap(map); //Add infobox to Map
+        infobox4.setMap(map); //Add infobox to Map
+        infobox5.setMap(map); //Add infobox to Map
+    }
+
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  
+<script src="https://cdn.webrtc.ecl.ntt.com/skyway-4.4.3.js"></script> 
+<title>Chat_Zazen</title>
+<link rel="stylesheet" href="css/reset.css">
+<link rel="stylesheet" href="css/style.line.css">
+</head>
+<body>
+
+<!-- コンテンツ表示画面 -->
+
+<div class="head">1. Japanese Zazen</div>
+<div>
+    <div id="outputframe"><div id="output" ></div></div>
+    <div id="inputarea">
+        <div>
+            <input type="text" id="uname" placeholder="name">
+        </div>
+        <div>
+            <textarea name="" id="text" cols="30" rows="10"placeholder="message"></textarea>
+            <button id="send">send</button>
+        </div>
+    </div>
+
+    <div id="idarea">
+        <p>Your ID：　　</p>
+        <p id="my-id"></p>
+    </div>
+    <br>
+</div>
+<div id="talkarea">
+    <button id="talk">Video Mode</button>
+    <button id="make-call">CALL</button>
+</div>
+<br>
+<br>
+<button id="allDelete">all delete</button>
+
+
+<!--/ コンテンツ表示画面 -->
+
+
+
+<!-- JQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<!-- JQuery -->
+<script>
+
+
+</script>
+
+<!--** 以下Firebase **-->
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+  import { getDatabase, ref, push, set, onChildAdded, remove, onChildRemoved }
+      from "https://cdnjs.cloudflare.com/ajax/libs/firebase/9.6.0/firebase-database.min.js";
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "",
+    authDomain: "gsapp-525cd.firebaseapp.com",
+    projectId: "gsapp-525cd",
+    storageBucket: "gsapp-525cd.appspot.com",
+    messagingSenderId: "164980706045",
+    appId: "1:164980706045:web:29da9def73a1a2f91ecc94"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+
+  const db=getDatabase(app);
+  const dbRef=ref(db,"zazen");
+  
+  
+    //ページ更新時の自分の名前プリセット
+    let namae=localStorage.getItem("ラインアプリ名前");
+    console.log(namae);
+    $("#uname").val(namae);
+
+    $("#send").on("click",function(){
+        const uname=$("#uname").val();
+        const text=$("#text").val();
+        const date1 = new Date();
+        const date2 = date1.getFullYear() + "/" + 
+            (date1.getMonth() + 1)  + "/" + 
+            date1.getDate() + "　" + 
+            date1.getHours() + ":" + 
+            date1.getMinutes() + "" ;
+        const msg={
+            uname:uname,
+            text:text,
+            date2:date2,
+        }
+        const newPostRef=push(dbRef);
+        set(newPostRef,msg);
+        $("#text").val("");
+        $("#output").scrollTop(999999999);
+    });
+
+
+
+    onChildAdded(dbRef,function (data){
+        const msg=data.val();
+        const key=data.key; //keyを取得
+        const myname=$("#uname").val(); 
+
+        //console.log(msg);
+        //console.log(key);
+        console.log(myname);
+        //console.log(msg.uname);
+        if(msg.uname=="zazen"){
+            let 
+            h='<div id="othermessagediv">';
+            h+='<div id="othername">';
+            h+='<img src="./img/zazen.png" width=50px>';
+            h+=msg.uname;
+            h+='</div>';
+            h+='<div id="othermsgdelete">';
+            h+='<div id="othermessage">';
+            h+=msg.text;
+            h+='</div>';
+            h+='<button id="delete" class="';
+            h+=key;
+            h+='">削除</button>';
+            h+='<button id="transl" class="';
+            h+=msg.text;
+            h+='">翻訳</button>';
+            h+='</div>';
+            h+='<div id="otherdate">';
+            h+=msg.date2;
+            h+='</div></div>';
+            //h+='<button id="delete" class="';
+            //h+=key;
+            //h+='">削除</button>';
+            //h+='</div>';
+            $("#output").append(h);
+        }else if(msg.uname==myname){
+            let 
+            h='<div id="mymessagediv">';
+            h+='<div id="myname">';
+            h+=msg.uname;
+            h+='</div>';
+
+            h+='<div id="mymsgdelete">';
+            h+='<div id="mymessage">';
+            h+=msg.text;
+            h+='</div>';
+            h+='<button id="delete" class="';
+            h+=key;
+            h+='">削除</button>';
+            h+='<button id="transl" class="';
+            h+=msg.text;
+            h+='">翻訳</button>';
+            h+='</div>';
+
+            h+='<div id="mydate">';
+            h+=msg.date2;
+            h+='</div></div>';
+            //h+='<button id="delete" class="';
+            //h+=key;
+            //h+='">削除</button>';
+            //h+='</div>';
+            $("#output").append(h);
+        }else{
+            let 
+            h='<div id="othermessagediv">';
+            h+='<div id="othername">';
+            h+=msg.uname;
+            h+='</div>';
+            h+='<div id="othermsgdelete">';
+            h+='<div id="othermessage">';
+            h+=msg.text;
+            h+='</div>';
+            h+='<button id="delete" class="';
+            h+=key;
+            h+='">削除</button>';
+            h+='<button id="transl" class="';
+            h+=msg.text;
+            h+='">翻訳</button>';
+            h+='</div>';
+            h+='<div id="otherdate">';
+            h+=msg.date2;
+            h+='</div></div>';
+            //h+='<button id="delete" class="';
+            //h+=key;
+            //h+='">削除</button>';
+            //h+='</div>';
+            $("#output").append(h);
+        };
+        let nameset=localStorage.getItem("ラインアプリ名前");
+        if(nameset!=myname){
+            localStorage.setItem("ラインアプリ名前",myname);
+            location.reload();
+            };
+        $("#output").scrollTop(999999999);
+    })
+
+
+
+
+    $("#text").on("keydown",function(e){
+        if(e.keyCode==13){
+        //console.log(e);
+        const uname=$("#uname").val();
+        const text=$("#text").val();
+        const date1 = new Date();
+        const date2 = date1.getFullYear() + "/" + 
+            (date1.getMonth() + 1)  + "/" + 
+            date1.getDate() + "　" + 
+            date1.getHours() + ":" + 
+            date1.getMinutes() + "" ;
+        const msg={
+            uname:uname,
+            text:text,
+            date2:date2,
+        }
+        const newPostRef=push(dbRef);
+        set(newPostRef,msg);
+        $("#text").val("");
+        $("#output").scrollTop(999999999);
+        }
+        });
+
+    ///個別削除ボタン押下イベント
+    $(document).on("click","#delete", function () {
+        //alert("test");
+        const key=$(this).attr("class");
+        console.log(key);
+        remove(ref(db, "zazen/" + key));
+        location.reload();
+        //console.log("remove: ${random_id}");
+    });
+
+
+    $("#allDelete").on("click",function(){
+        console.log("test");
+        remove(dbRef);
+        $("#output").remove();
+        //const uname=$("#uname").val();
+        //const text=$("#text").val();
+        //const msg={
+        //    uname:uname,
+        //    text:text
+        //}
+        //const newPostRef=push(dbRef);
+        //set(newPostRef,msg);
+        });
+        
+
+const date1 = new Date();
+const date2 = date1.getFullYear() + "/" + 
+            (date1.getMonth() + 1)  + "/" + 
+            date1.getDate() + "　" + 
+            date1.getHours() + "時" + 
+            date1.getMinutes() + "分" 
+console.log(date2); 
+
+// 以下翻訳関連
+$(document).on("click","#transl", function () {
+    const text=$(this).attr("class");
+    let apiKey = ''
+    let fromLang = 'en'
+    let toLang = 'ja'
+    const URL = "https://translation.googleapis.com/language/translate/v2?key="+apiKey+
+    "&q="+encodeURI(text)+"&source="+fromLang+"&target="+toLang
+    let xhr = new XMLHttpRequest()
+    xhr.open('POST', [URL], false)
+    xhr.send();
+    if (xhr.status === 200) {
+        const res = JSON.parse(xhr.responseText);
+        const uname=$("#uname").val();
+        const textrev=res["data"]["translations"][0]["translatedText"];
+        const date1 = new Date();
+        const date2 = date1.getFullYear() + "/" + 
+            (date1.getMonth() + 1)  + "/" + 
+            date1.getDate() + "　" + 
+            date1.getHours() + ":" + 
+            date1.getMinutes() + "" ;
+        const msg={
+            uname:uname,
+            text:textrev,
+            date2:date2,
+        }
+        const newPostRef=push(dbRef);
+        set(newPostRef,msg);
+        $("#text").val("");
+        $("#output").scrollTop(999999999);
+        }
+    }
+    );
+
+
+  </script>
+
+
+<script>
+    let localStream;
+    let 
+        videohtml='<video id="my-video" width="250px" autoplay  muted playsinline></video>';
+        videohtml+='<p>YOU</p>';
+        videohtml+='<input id="their-id"placeholder="Input ID you want to dial"></input>';
+      //  videohtml+='<button id="make-call">発信</button>';
+        videohtml+='<video id="their-video" width="250px" autoplay muted playsinline></video>';
+        videohtml+='<p>Person on the Line</p>';
+        videohtml+='';
+
+//通話ボタン押下イベント
+    $("#talk").on("click",function(){
+        //画面をチャットから通話に切り替え
+        $("#output").html(videohtml);
+        // カメラ映像取得
+        navigator.mediaDevices.getUserMedia({video: true, audio: true})
+        .then( stream => {
+        // 成功時にvideo要素にカメラ映像をセットし、再生
+        const videoElm = document.getElementById('my-video');
+        videoElm.srcObject = stream;
+        videoElm.play();
+        // 着信時に相手にカメラ映像を返せるように、グローバル変数に保存しておく
+        localStream = stream;
+        }).catch( error => {
+        // 失敗時にはエラーログを出力
+        console.error('mediaDevice.getUserMedia() error:', error);
+        return;
+        
+        });
+    });
+//Peer作成
+  const peer = new Peer({
+    key:'',
+    debug: 3
+  });
+ 
+//PeerID取得
+peer.on('open', () => {
+    document.getElementById('my-id').textContent = peer.id;
+});
+
+// 発信処理
+document.getElementById('make-call').onclick = () => {
+  const theirID = document.getElementById('their-id').value;
+  const mediaConnection = peer.call(theirID, localStream);
+  setEventListener(mediaConnection);
+};
+
+// イベントリスナを設置する関数
+const setEventListener = mediaConnection => {
+  mediaConnection.on('stream', stream => {
+    // video要素にカメラ映像をセットして再生
+    const videoElm = document.getElementById('their-video')
+    videoElm.srcObject = stream;
+    videoElm.play();
+  });
+}
+
+//着信処理
+peer.on('call', mediaConnection => {
+  mediaConnection.answer(localStream);
+  setEventListener(mediaConnection);
+});
+
+  </script>
+
+
+
+
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
